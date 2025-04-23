@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: copy-html-job
+spec:
+  template:
+    spec:
+      containers:
+      - name: copy-html
+        image: busybox
+        command: ["/bin/sh", "-c"]
+        args:
+          - mkdir -p /mnt/html && echo '<h1>Hello from NFS!</h1>' > /mnt/html/index.html;
+        volumeMounts:
+        - name: nfs-volume
+          mountPath: /mnt/html
+      restartPolicy: Never
+      volumes:
+      - name: nfs-volume
+        persistentVolumeClaim:
+          claimName: nfs-pvc
+  backoffLimit: 2
